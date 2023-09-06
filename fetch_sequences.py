@@ -97,21 +97,28 @@ def get_mirbase_sequence(mirna):
 def annotate_mirna_sequences(data):
     mirna = data[0]
     ath_mature_mirnas_dict = data[1]
+    ath_mature_mirnas_pmiren_dict = data[2]
 
     if r.get(r_mirna_sequence(mirna)):
         # Only fetches the sequences that are not already stored into the local database.
         return
 
-    if mirna not in ath_mature_mirnas_dict.values():
-        # If the mirna cannot be found in the downloaded mature sequences dataset,
+    if mirna in ath_mature_mirnas_dict.values():
+        # miRNA is available at miRBase downloaded data.
+        # So it extracts the sequence from the miRBase mature miRNAs dataset.
+        mirna_sequence = list(filter(lambda x: ath_mature_mirnas_dict[x] == mirna,
+                                     ath_mature_mirnas_dict))[0]
+    elif mirna in ath_mature_mirnas_pmiren_dict.values():
+        # miRNA is available at PmiRen downloaded dataset.
+        mirna_sequence = list(filter(lambda x: ath_mature_mirnas_pmiren_dict[x] == mirna,
+                                     ath_mature_mirnas_pmiren_dict))[0]
+    else:
+        # If the mirna cannot be found in the downloaded mature sequences datasets,
         # the sequence is extracted using web scrapping.
         mirna_sequence = get_mirbase_sequence(mirna)
         if not mirna_sequence:
+            # If the sequence cannot be found in the miRBase website search tool, then is discarded.
             mirna_sequence = '-'
-    else:
-        # Extracts the sequence from the mature miRNAs dataset.
-        mirna_sequence = list(filter(lambda x: ath_mature_mirnas_dict[x] == mirna,
-                                     ath_mature_mirnas_dict))[0]
 
     # Saves the sequence into redis database.
     r.set(r_mirna_sequence(mirna), mirna_sequence)
