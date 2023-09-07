@@ -39,6 +39,18 @@ def r_mirna_sequence(mirna):
 @sleep_and_retry
 @limits(calls=1, period=timedelta(seconds=10).total_seconds())
 def get_mirbase_sequence(mirna):
+    """
+        Fetches the miRBase website to extract the miRNA sequences.
+
+        Parameters:
+        -----------
+            mirna (string): Name of the miRNA.
+
+        Returns:
+        --------
+            mirna_sequence (string): Retrieved nucleotide sequence.
+    """
+
     # Base url for miRBase [42].
     base_url_mirbase = 'https://mirbase.org/'
 
@@ -95,6 +107,19 @@ def get_mirbase_sequence(mirna):
 
 # Annotates the sequences.
 def annotate_mirna_sequences(data):
+    """
+        Matches the miRNAs with their sequences, and stores the results into a local database.
+
+        Parameters:
+        -----------
+            data (list): List containing miRNA name,
+                         mature miRNA data from miRBase,
+                         mature miRNA data from PmiRen.
+
+        Returns:
+        --------
+            None
+    """
     mirna = data[0]
     ath_mature_mirnas_dict = data[1]
     ath_mature_mirnas_pmiren_dict = data[2]
