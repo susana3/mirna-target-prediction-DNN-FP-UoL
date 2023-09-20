@@ -52,8 +52,19 @@ def get_target_name(target):
     # Base url for Arabidopsis.org [43].
     base_url = 'https://www.arabidopsis.org/'
 
+    # Prepares the target name.
+    target = target.split('.')[0]
+
+    # Skips if the gene does not require name annotation.
+    if not target.startswith('AT'):
+        return
+
+    # Prevents fetching twice.
+    if r.get(r_target_match_name(target)):
+        return
+
     url = f'{base_url}/servlets/TairObject?type=locus&name={target}'
-    print(f'Fetching: {url}')
+    # print(f'Fetching: {url}')
     browser.get(url)
     # Gets and stores the name in the required nomenclature format.
     row_id = browser.find_element(By.XPATH,
@@ -61,8 +72,16 @@ def get_target_name(target):
     if 'Other names' in row_id.text:
         row_name = browser.find_element(By.XPATH,
                                         '/html/body/div/div[2]/table[2]/tbody/tr[3]/td[2]/table/tbody/tr/td')
-        target_name = row_name.text.split(',')[0]
-        r.set(r_target_match_name(target), target_name)
+        # By default, selects the shortest form of target name.
+        alt_names = row_name.text.split(',')
+        target_name = alt_names[0]
+        for alt_name in alt_names:
+            if len(alt_name) < len(target_name):
+                target_name = alt_name
+
+        # Stores the values in the local db.
+        if target_name != '':
+            r.set(r_target_match_name(target), target_name)
 
 
 
