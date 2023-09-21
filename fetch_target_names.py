@@ -37,16 +37,16 @@ def r_target_match_name(target):
 @limits(calls=1, period=timedelta(seconds=10).total_seconds())
 def get_target_name(target):
     """
-    Fetches the Arabidopsis.org website to extract the respective gene symbol
-    in the format required for this project.
+        Fetches the Arabidopsis.org website to extract the respective gene symbol
+        in the format required for this project.
 
-    Parameters:
-    -----------
-        target (string): Name of the mRNA target.
+        Parameters:
+        -----------
+            target (string): Name of the mRNA target.
 
-    Returns:
-    --------
-        None.
+        Returns:
+        --------
+            None.
     """
 
     # Base url for Arabidopsis.org [43].

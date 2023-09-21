@@ -120,6 +120,7 @@ def annotate_mirna_sequences(data):
         --------
             None
     """
+
     mirna = data[0]
     ath_mature_mirnas_dict = data[1]
     ath_mature_mirnas_pmiren_dict = data[2]
